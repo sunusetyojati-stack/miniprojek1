@@ -11,4 +11,5 @@ TRPL - 1A
 7. Yaafi Yumana (Programmer + Visual Designer)
 
 Cilacap, 04/November/2025
+
 © Politeknik Negeri Cilacap
