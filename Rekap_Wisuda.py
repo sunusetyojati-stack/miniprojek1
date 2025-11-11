@@ -1,3 +1,4 @@
+import random
 import pandas as pd
 pd.options.display.float_format
 import matplotlib.pyplot as plt
@@ -66,13 +67,16 @@ jumlah_predikat = data['Predikat Kelulusan'].value_counts()
 total_wisudawan = len(data)
 persentase_predikat = (jumlah_predikat / total_wisudawan) * 100
 
-# 8️⃣ Visualisasi Pie Chart Predikat Kelulusan
+# 8️⃣ Visualisasi Pie Chart Predikat Kelulusan (warna acak)
+
 plt.figure(figsize=(8, 8))
+n = len(jumlah_predikat)
+colors = [(random.random(), random.random(), random.random()) for _ in range(n)]
 plt.pie(
     jumlah_predikat,
     labels=[f"{label}\n{persentase:.1f}%" for label, persentase in zip(jumlah_predikat.index, persentase_predikat)],
     startangle=140,
-    colors=plt.cm.Pastel1.colors,
+    colors=colors,
     wedgeprops={'edgecolor': 'black'}
 )
 plt.title('Persentase Predikat Kelulusan Wisudawan')
@@ -92,28 +96,37 @@ for i, v in enumerate(data.groupby('Program Studi')['IPK'].mean().sort_values())
 plt.tight_layout()
 plt.show()
 
-#🔟 10 Mahasiswa dengan ipk tertinggi
+#🔟 10 Mahasiswa dengan ipk tertinggi (diagram batang menghadap ke atas)
 top_10_ipk = data.nlargest(10, 'IPK')[['NIM', 'Nama Mahasiswa', 'Program Studi', 'IPK']]
-plt.figure(figsize=(10, 6))
-plt.barh(top_10_ipk['Nama Mahasiswa'], top_10_ipk['IPK'], color='orange', edgecolor='black')
+plt.figure(figsize=(12, 6))
+x = range(len(top_10_ipk))
+plt.bar(x, top_10_ipk['IPK'], color='orange', edgecolor='black')
+plt.xticks(x, top_10_ipk['Nama Mahasiswa'], rotation=45, ha='right')
 plt.title('10 Mahasiswa dengan IPK Tertinggi')
-plt.xlabel('IPK')
-plt.ylabel('Nama Mahasiswa')
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-for i , v in enumerate(top_10_ipk['IPK']):
-    plt.text(v + 0.02, i, f"{v:.2f}", va='center')
+plt.xlabel('Nama Mahasiswa')
+plt.ylabel('IPK')
+plt.ylim(0, top_10_ipk['IPK'].max() + 0.5)
+for i, v in enumerate(top_10_ipk['IPK']):
+    plt.text(i, v + 0.02, f"{v:.2f}", ha='center', va='bottom')
 plt.tight_layout()
 plt.show()
 
-#1️⃣1️⃣ 1 Mahasiswa dengan nilai tertinggi per program studi
+#1️⃣1️⃣ Mahasiswa dengan nilai tertinggi per program studi (diagram batang menghadap ke atas)
 top_ipk_per_prodi = data.loc[data.groupby('Program Studi')['IPK'].idxmax()][['NIM', 'Nama Mahasiswa', 'Program Studi', 'IPK']]
-plt.figure(figsize=(10, 6))
-plt.barh(top_ipk_per_prodi['Nama Mahasiswa'] + ' (' + top_ipk_per_prodi['Program Studi'] + ')', top_ipk_per_prodi['IPK'], color='purple', edgecolor='black')
+plt.figure(figsize=(12, 6))
+x = range(len(top_ipk_per_prodi))
+labels = top_ipk_per_prodi['Nama Mahasiswa'] + ' (' + top_ipk_per_prodi['Program Studi'] + ')'
+
+# Buat warna acak untuk setiap bar
+colors = [(random.random(), random.random(), random.random()) for _ in range(len(top_ipk_per_prodi))]
+
+plt.bar(x, top_ipk_per_prodi['IPK'], color=colors, edgecolor='black')
+plt.xticks(x, labels, rotation=45, ha='right')
 plt.title('Mahasiswa dengan IPK Tertinggi per Program Studi')
-plt.xlabel('IPK')
-plt.ylabel('Program Studi')
-plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.xlabel('Mahasiswa (Program Studi)')
+plt.ylabel('IPK')
+plt.ylim(0, top_ipk_per_prodi['IPK'].max() + 0.5)
 for i, v in enumerate(top_ipk_per_prodi['IPK']):
-    plt.text(v + 0.02, i, f"{v:.2f}", va='center')
+    plt.text(i, v + 0.02, f"{v:.2f}", ha='center', va='bottom')
 plt.tight_layout()
 plt.show()
